@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Talent Hub & Prank Playground</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Space+Grotesk:wght@500;700;800&display=swap');
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0b0f19;
+      color: #f8fafc;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3, .font-heading {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Animated Gradient Background Mesh */
+    .bg-mesh {
+      background: radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.3) 0px, transparent 50%),
+                  radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.25) 0px, transparent 50%),
+                  radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.25) 0px, transparent 50%),
+                  radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.2) 0px, transparent 50%);
+      background-color: #0b0f19;
+      background-size: 200% 200%;
+      animation: meshGlow 12s ease infinite alternate;
+    }
+
+    @keyframes meshGlow {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0% 100%; }
+    }
+
+    /* Subtle Animated Texture Overlay */
+    .bg-texture {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 0);
+      background-size: 28px 28px;
+    }
+
+    /* Glassmorphism Containers */
+    .glass-card {
+      background: rgba(26, 34, 52, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .glass-modal {
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    /* Floating Animations */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(1deg); }
+    }
+
+    .animate-float {
+      animation: floatSlow 5s ease-in-out infinite;
+    }
+
+    @keyframes floatReverse {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(10px) rotate(-1.5deg); }
+    }
+
+    .animate-float-reverse {
+      animation: floatReverse 6s ease-in-out infinite;
+    }
+
+    /* Pulse Glow Animations */
+    @keyframes titleGlow {
+      0%, 100% { text-shadow: 0 0 20px rgba(168, 85, 247, 0.4), 0 0 40px rgba(236, 72, 153, 0.2); }
+      50% { text-shadow: 0 0 35px rgba(168, 85, 247, 0.8), 0 0 60px rgba(236, 72, 153, 0.5); }
+    }
+
+    .glow-title {
+      animation: titleGlow 3s ease-in-out infinite;
+    }
+
+    /* Alarm & Shake Effects */
+    @keyframes alarm-shake {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      10%, 30%, 50%, 70%, 90% { transform: translate(-8px, 4px) scale(1.02); }
+      20%, 40%, 60%, 80% { transform: translate(8px, -4px) scale(0.98); }
+    }
+
+    .animate-shake {
+      animation: alarm-shake 0.4s ease-in-out;
+    }
+
+    @keyframes redGlow {
+      0%, 100% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.3), inset 0 0 15px rgba(239, 68, 68, 0.1); }
+      50% { box-shadow: 0 0 60px rgba(239, 68, 68, 0.7), inset 0 0 30px rgba(239, 68, 68, 0.3); }
+    }
+
+    .glow-red {
+      animation: redGlow 1.5s infinite;
+    }
+
+    /* Rainbow Progress Bar Animation */
+    @keyframes shimmerBar {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    .rainbow-progress {
+      background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6, #10b981, #f59e0b, #ec4899);
+      background-size: 200% 100%;
+      animation: shimmerBar 2s linear infinite;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0f19;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+
+<body class="bg-mesh bg-texture min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white relative">
+
+  <!-- Floating Background Orbs / Particles -->
+  <div class="fixed top-20 left-10 w-48 h-48 rounded-full bg-violet-600/20 blur-3xl pointer-events-none animate-float"></div>
+  <div class="fixed bottom-20 right-10 w-64 h-64 rounded-full bg-pink-600/20 blur-3xl pointer-events-none animate-float-reverse"></div>
+
+  <header class="w-full max-w-6xl mx-auto p-6 flex justify-between items-center z-20">
+    <div class="flex items-center gap-3 cursor-pointer group" onclick="playAudio('pop'); showScreen('landing')">
+      <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-violet-600 via-pink-500 to-amber-400 flex items-center justify-center shadow-lg shadow-violet-500/30 group-hover:scale-110 transition-transform">
+        <i class="fa-solid fa-bolt text-white text-xl"></i>
+      </div>
+      <span class="font-heading text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
+        TalentSpot
+      </span>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <!-- God Mode Active Badge -->
+      <div id="godBadge" class="hidden items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 text-xs font-bold uppercase tracking-wider animate-pulse">
+        <i class="fa-solid fa-crown text-xs"></i>
+        <span>GOD MODE ACTIVE</span>
+      </div>
+
+      <!-- Secret God Mode Trigger Button -->
+      <button onclick="promptGodMode()" class="px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-violet-600/30 border border-slate-700/80 text-slate-400 hover:text-white text-xs font-semibold transition-all flex items-center gap-2 backdrop-blur-md hover:scale-105 active:scale-95">
+        <i class="fa-solid fa-gear"></i>
+        <span>⚙️ God Mode</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main View Area -->
+  <main class="w-full max-w-4xl mx-auto px-4 py-6 flex-1 flex flex-col justify-center items-center z-10">
+
+    <!-- ================= MAIN MENU SCREEN ================= -->
+    <section id="screen-landing" class="w-full text-center space-y-8 animate-float">
+      
+      <!-- Pulsing Title & Subtitle -->
+      <div class="space-y-4 max-w-2xl mx-auto">
+        <span class="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-violet-500/10 text-violet-400 border border-violet-500/30 backdrop-blur-sm shadow-inner">
+          <i class="fa-solid fa-sparkles text-pink-400 mr-1.5"></i> Showcase & Discover
+        </span>
+        <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight text-white glow-title">
+          What is your <br class="hidden sm:inline" />
+          <span class="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-pink-400 to-amber-300">Superpower?</span>
+        </h1>
+        <p class="text-slate-300/90 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
+          Showcase your unique skills to the world or browse through amazing talents shared by our real community members!
+        </p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-5 justify-center items-center pt-2 max-w-md mx-auto w-full">
+        <!-- YOUR TALENT BUTTON -->
+        <button onclick="playAudio('pop'); showScreen('your-talent')" class="w-full sm:w-1/2 group relative inline-flex items-center justify-center p-0.5 overflow-hidden font-extrabold rounded-2xl bg-gradient-to-br from-violet-600 via-pink-500 to-amber-400 text-white shadow-xl shadow-violet-500/25 transition-all duration-300 hover:scale-105 active:scale-95">
+          <span class="w-full relative px-6 py-4 transition-all ease-in duration-75 bg-slate-900/80 rounded-[14px] group-hover:bg-opacity-0 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles text-pink-400 group-hover:text-white transition-colors text-lg"></i>
+            <span class="tracking-wide">YOUR TALENT</span>
+          </span>
+        </button>
+
+        <!-- SEE OTHERS TALENT BUTTON -->
+        <button onclick="playAudio('pop'); showScreen('others-talent')" class="w-full sm:w-1/2 group relative inline-flex items-center justify-center p-0.5 overflow-hidden font-extrabold rounded-2xl bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 text-white shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 border border-slate-700 hover:border-slate-500">
+          <span class="w-full relative px-6 py-4 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-users text-violet-400 text-lg"></i>
+            <span class="tracking-wide">SEE OTHERS</span>
+          </span>
+        </button>
+      </div>
+
+      <!-- Footer Notice Text -->
+      <div class="pt-8">
+        <p class="text-xs sm:text-sm text-slate-400/90 max-w-lg mx-auto bg-slate-800/40 py-3 px-5 rounded-full border border-slate-700/50 flex items-center justify-center gap-2 shadow-inner backdrop-blur-md">
+          <i class="fa-solid fa-shield-halved text-emerald-400 text-base"></i>
+          <span>you aren't sharing any personal info so just be relaxed</span>
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ================= YOUR TALENT SCREEN ================= -->
+    <section id="screen-your-talent" class="w-full max-w-md hidden transition-all duration-300">
+      <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl relative border border-slate-700/60">
+        
+        <div class="w-12 h-12 rounded-2xl bg-violet-500/20 border border-violet-500/30 flex items-center justify-center text-violet-400 mb-5 mx-auto">
+          <i class="fa-solid fa-feather-pointed text-2xl"></i>
+        </div>
+
+        <h2 class="text-2xl font-bold text-center text-white mb-1">Share Your Skill</h2>
+        <p class="text-xs text-slate-400 text-center mb-6">Fill in your details below to share your talent!</p>
+
+        <form id="talent-form" onsubmit="handleFormShare(event)" class="space-y-5">
+          <div>
+            <label for="username" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+              Username / Nickname
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <i class="fa-solid fa-user"></i>
+              </span>
+              <input type="text" id="username" required placeholder="e.g. SpeedDemon99" 
+                class="w-full pl-10 pr-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent text-white placeholder-slate-500 outline-none transition-all text-sm">
+            </div>
+          </div>
+
+          <div>
+            <label for="talent" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+              Your Unique Talent
+            </label>
+            <div class="relative">
+              <span class="absolute top-3.5 left-0 pl-3.5 flex items-start pointer-events-none text-slate-500">
+                <i class="fa-solid fa-star"></i>
+              </span>
+              <textarea id="talent" required rows="3" placeholder="e.g. I can solve a Rubik's cube with one hand in 12 seconds!" 
+                class="w-full pl-10 pr-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent text-white placeholder-slate-500 outline-none transition-all resize-none text-sm"></textarea>
+            </div>
+          </div>
+
+          <!-- ANIMATED SHARING LOADING BAR CONTAINER -->
+          <div id="loading-container" class="hidden space-y-2.5 pt-2">
+            <div class="flex justify-between items-center text-xs text-slate-300 font-semibold">
+              <span id="loading-status" class="flex items-center gap-2">
+                <i class="fa-solid fa-spinner animate-spin text-pink-400"></i>
+                Sharing your talent with the world...
+              </span>
+              <span id="loading-percent" class="text-violet-400 font-mono">0%</span>
+            </div>
+            <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden p-0.5 border border-slate-700">
+              <div id="progress-bar" class="h-full rounded-full rainbow-progress transition-all duration-75" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Form Action Buttons -->
+          <div id="form-buttons" class="flex gap-4 pt-2">
+            <!-- BACK BUTTON TRIGGERS THE $100 PRANK -->
+            <button type="button" onclick="triggerBackPrank()" 
+              class="w-1/2 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-semibold text-slate-300 transition-all flex items-center justify-center gap-2 hover:text-white active:scale-95">
+              <i class="fa-solid fa-arrow-left text-xs"></i> Back
+            </button>
+
+            <!-- SHARE BUTTON TRIGGERS LOADING THEN POST-SHARE MODAL -->
+            <button type="submit" 
+              class="w-1/2 py-3 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 font-semibold text-white shadow-lg shadow-violet-600/30 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95">
+              <i class="fa-solid fa-paper-plane text-xs"></i> Share
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+
+    <!-- ================= SEE OTHERS TALENT SCREEN ================= -->
+    <section id="screen-others-talent" class="w-full hidden space-y-6 transition-all duration-300">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-800/40 p-4 rounded-2xl border border-slate-700/50 backdrop-blur-md">
+        <div>
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-fire text-amber-400"></i> Community Showcase
+          </h2>
+          <p class="text-xs text-slate-400">Real skills submitted by visitors in this browser</p>
+        </div>
+        <div class="flex gap-3">
+          <button onclick="playAudio('pop'); showScreen('your-talent')" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-2 active:scale-95">
+            <i class="fa-solid fa-plus"></i> Submit Yours
+          </button>
+          <button onclick="playAudio('pop'); showScreen('landing')" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-xl text-xs font-bold transition-all flex items-center gap-2 active:scale-95">
+            <i class="fa-solid fa-house"></i> Main Menu
+          </button>
+        </div>
+      </div>
+
+      <!-- Real Dynamic Talent Cards Grid -->
+      <div id="talents-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ================= INESCAPABLE BACK PRANK MODAL ($100 REQUEST) ================= -->
+  <div id="back-prank-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div id="back-prank-card" class="glass-modal glow-red max-w-md w-full rounded-3xl p-6 sm:p-8 text-center space-y-6 relative overflow-hidden transform transition-all">
+      
+      <div class="w-16 h-16 rounded-full bg-red-500/20 border-2 border-red-500/50 text-red-500 flex items-center justify-center mx-auto text-3xl animate-bounce">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+
+      <div class="space-y-2">
+        <span class="px-3 py-1 bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold uppercase rounded-full tracking-wider">
+          NAVIGATION LOCKED
+        </span>
+        <h3 class="text-2xl font-extrabold text-white">Cancellation Fee Required!</h3>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          Leaving without sharing your talent incurs an immediate processing penalty fee.
+        </p>
+      </div>
+
+      <div class="bg-red-950/40 border border-red-500/30 rounded-2xl p-4 text-center">
+        <span class="text-xs text-red-300 uppercase tracking-widest font-semibold block mb-1">Cancellation Penalty</span>
+        <span class="text-4xl font-extrabold text-red-400 font-heading">$100.00 USD</span>
+      </div>
+
+      <button onclick="openPaymentGateway('100')" class="w-full py-4 rounded-2xl bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold text-base shadow-lg shadow-red-600/40 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2">
+        <i class="fa-solid fa-credit-card"></i>
+        <span>PAY $100 TO CANCEL REQUEST</span>
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ================= POST-SHARE REACTION MODAL (WITH CUT BUTTON) ================= -->
+  <div id="post-share-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="glass-modal glow-red max-w-md w-full rounded-3xl p-6 sm:p-8 text-center space-y-6 relative overflow-hidden transform transition-all">
+      
+      <!-- PROMINENT CUT / CLOSE BUTTON THAT RETURNS TO MAIN MENU -->
+      <button onclick="closePrankAndGoHome()" title="Close and return to main menu" 
+        class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800/80 hover:bg-red-600 text-slate-300 hover:text-white border border-slate-700 flex items-center justify-center transition-all duration-200 active:scale-90 text-sm shadow-md">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-500/50 text-amber-400 flex items-center justify-center mx-auto text-4xl animate-bounce">
+        <i class="fa-solid fa-face-laugh-squint"></i>
+      </div>
+
+      <div class="space-y-3 pt-2">
+        <h3 class="text-xl sm:text-2xl font-extrabold text-amber-300 leading-snug">
+          thanks for posting your shitty talent brainless kid 🤣🤣🤣🤣🤣🤣
+        </h3>
+        <p class="text-xs text-slate-400">
+          Your post has been successfully stored in the public showcase.
+        </p>
+      </div>
+
+      <!-- Delete Button leads to $1,000,000 Fee Trap -->
+      <div class="pt-2">
+        <button onclick="triggerDeletePostTrap()" class="w-full py-3.5 rounded-xl bg-red-600/90 hover:bg-red-500 text-white font-bold text-sm shadow-lg shadow-red-600/30 transition-all flex items-center justify-center gap-2 active:scale-95">
+          <i class="fa-solid fa-trash-can"></i>
+          <span>Delete My Post</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= PAYMENT / TRAP MODAL ================= -->
+  <div id="payment-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
+    <div class="glass-card max-w-md w-full rounded-3xl p-6 sm:p-8 space-y-6 relative border-2 border-emerald-500/40 shadow-2xl">
+      
+      <div class="flex justify-between items-center border-b border-slate-700/60 pb-4">
+        <div class="flex items-center gap-2 text-emerald-400 font-heading font-bold text-base">
+          <i class="fa-solid fa-shield-cat"></i>
+          <span>Secure Prank Gateway</span>
+        </div>
+        <span class="text-xs px-2.5 py-1 rounded bg-slate-800 text-slate-400 font-mono">TEST-MODE</span>
+      </div>
+
+      <div id="pay-step-1" class="space-y-4">
+        <p id="pay-description-text" class="text-sm text-slate-300">
+          Enter payment amount to finalize request cancellation:
+        </p>
+        
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-xl font-bold text-slate-400">$</span>
+          <input type="number" id="pay-amount" value="100" 
+            class="w-full pl-8 pr-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-xl font-bold text-emerald-400 outline-none focus:ring-2 focus:ring-emerald-500">
+        </div>
+
+        <button onclick="processFakePayment()" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-bold text-white transition-all shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-lock"></i>
+          <span>Confirm Payment</span>
+        </button>
+      </div>
+
+      <!-- PRANK REVEAL STEP -->
+      <div id="pay-step-2" class="hidden text-center space-y-5 py-2">
+        <div class="w-16 h-16 rounded-full bg-amber-500/20 border-2 border-amber-500 text-amber-400 flex items-center justify-center mx-auto text-3xl animate-bounce">
+          <i class="fa-solid fa-face-grin-tears"></i>
+        </div>
+        
+        <h3 class="text-2xl font-extrabold text-amber-300 font-heading">GOTCHA! 😂</h3>
+        
+        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+          Relax! This whole site is just a <strong>harmless prank</strong>! No money was charged, and no real card info was collected.
+        </p>
+
+        <button onclick="closePrankAndGoHome()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 text-white font-bold hover:opacity-90 transition-all shadow-lg">
+          Return to Main Menu 🎉
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Footer -->
+  <footer class="w-full max-w-6xl mx-auto p-6 text-center text-xs text-slate-500 z-10">
+    <p>© 2026 TalentSpot. Built purely for fun and entertainment.</p>
+  </footer>
+
+
+  <script>
+    /* ================= WEB AUDIO SYNTHESIZER ================= */
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) audioCtx = new AudioCtx();
+    }
+
+    function playAudio(type) {
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+
+        if (type === 'pop') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(450, now);
+          osc.frequency.exponentialRampToValueAtTime(900, now + 0.08);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'alarm') {
+          for (let i = 0; i < 3; i++) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            const startTime = now + (i * 0.12);
+            osc.frequency.setValueAtTime(850, startTime);
+            osc.frequency.linearRampToValueAtTime(450, startTime + 0.1);
+            gain.gain.setValueAtTime(0.25, startTime);
+            gain.gain.linearRampToValueAtTime(0.01, startTime + 0.1);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + 0.1);
+          }
+        } else if (type === 'fanfare') {
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, index) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const startTime = now + (index * 0.09);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(0.2, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + 0.35);
+          });
+        }
+      } catch (e) {
+        // Audio fallback handling
+      }
+    }
+
+
+    /* ================= LOCAL STORAGE FOR REAL TALENTS ================= */
+    function getStoredTalents() {
+      const data = localStorage.getItem('user_talents_list');
+      return data ? JSON.parse(data) : [];
+    }
+
+    function saveStoredTalents(talents) {
+      localStorage.setItem('user_talents_list', JSON.stringify(talents));
+    }
+
+
+    /* ================= SCREEN NAVIGATION ================= */
+    function showScreen(screenName) {
+      document.getElementById('screen-landing').classList.add('hidden');
+      document.getElementById('screen-your-talent').classList.add('hidden');
+      document.getElementById('screen-others-talent').classList.add('hidden');
+
+      if (screenName === 'landing') {
+        document.getElementById('screen-landing').classList.remove('hidden');
+      } else if (screenName === 'your-talent') {
+        document.getElementById('screen-your-talent').classList.remove('hidden');
+      } else if (screenName === 'others-talent') {
+        renderTalentsGrid();
+        document.getElementById('screen-others-talent').classList.remove('hidden');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+
+    /* ================= FORM SUBMISSION & ANIMATED PROGRESS BAR ================= */
+    function handleFormShare(e) {
+      e.preventDefault();
+      const usernameInput = document.getElementById('username');
+      const talentInput = document.getElementById('talent');
+
+      const name = usernameInput.value.trim();
+      const talent = talentInput.value.trim();
+
+      if (!name || !talent) return;
+
+      const loadingContainer = document.getElementById('loading-container');
+      const formButtons = document.getElementById('form-buttons');
+      const progressBar = document.getElementById('progress-bar');
+      const loadingPercent = document.getElementById('loading-percent');
+      const loadingStatus = document.getElementById('loading-status');
+
+      // Hide buttons and reveal loading indicator
+      formButtons.classList.add('hidden');
+      loadingContainer.classList.remove('hidden');
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 2;
+        progressBar.style.width = progress + '%';
+        loadingPercent.innerText = progress + '%';
+
+        if (progress === 40) {
+          loadingStatus.innerHTML = `<i class="fa-solid fa-server animate-spin text-amber-400"></i> Publishing to global server...`;
+        } else if (progress === 80) {
+          loadingStatus.innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Finalizing talent card...`;
+        }
+
+        if (progress >= 100) {
+          clearInterval(interval);
+
+          // Save actual submission to LocalStorage
+          const currentList = getStoredTalents();
+          currentList.unshift({ id: Date.now(), username: name, talent: talent });
+          saveStoredTalents(currentList);
+
+          // Reset Form UI
+          usernameInput.value = '';
+          talentInput.value = '';
+          loadingContainer.classList.add('hidden');
+          formButtons.classList.remove('hidden');
+          progressBar.style.width = '0%';
+
+          // Play audio and show Reaction Modal
+          playAudio('fanfare');
+          openPostShareModal();
+        }
+      }, 35); // ~1.75s loading sequence
+    }
+
+
+    /* ================= PRANK MODAL CONTROLS ================= */
+    function triggerBackPrank() {
+      playAudio('alarm');
+      const modal = document.getElementById('back-prank-modal');
+      const card = document.getElementById('back-prank-card');
+      modal.classList.remove('hidden');
+      card.classList.add('animate-shake');
+      setTimeout(() => card.classList.remove('animate-shake'), 500);
+    }
+
+    function openPostShareModal() {
+      document.getElementById('post-share-modal').classList.remove('hidden');
+      if (window.confetti) {
+        confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+      }
+    }
+
+    // CRITICAL REQUIREMENT: Cutting the reaction modal leads directly to MAIN MENU
+    function closePrankAndGoHome() {
+      playAudio('pop');
+      document.getElementById('post-share-modal').classList.add('hidden');
+      document.getElementById('back-prank-modal').classList.add('hidden');
+      document.getElementById('payment-modal').classList.add('hidden');
+      showScreen('landing');
+    }
+
+    function triggerDeletePostTrap() {
+      playAudio('alarm');
+      document.getElementById('post-share-modal').classList.add('hidden');
+      openPaymentGateway('1000000', 'Deleting your post requires a processing penalty fee:');
+    }
+
+    function openPaymentGateway(amount, customText) {
+      playAudio('pop');
+      document.getElementById('back-prank-modal').classList.add('hidden');
+      document.getElementById('pay-step-1').classList.remove('hidden');
+      document.getElementById('pay-step-2').classList.add('hidden');
+      document.getElementById('pay-amount').value = amount;
+      
+      if (customText) {
+        document.getElementById('pay-description-text').innerText = customText;
+      } else {
+        document.getElementById('pay-description-text').innerText = "Enter payment amount to finalize request cancellation:";
+      }
+
+      document.getElementById('payment-modal').classList.remove('hidden');
+    }
+
+    function processFakePayment() {
+      playAudio('fanfare');
+      document.getElementById('pay-step-1').classList.add('hidden');
+      document.getElementById('pay-step-2').classList.remove('hidden');
+    }
+
+
+    /* ================= RENDER COMMUNITY TALENT FEED ================= */
+    function renderTalentsGrid() {
+      const container = document.getElementById('talents-grid');
+      const talents = getStoredTalents();
+
+      if (talents.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full glass-card p-8 rounded-2xl text-center space-y-3">
+            <i class="fa-solid fa-ghost text-4xl text-slate-600"></i>
+            <p class="text-sm text-slate-400">No talents submitted yet! Be the very first person to post.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = talents.map((item) => `
+        <div class="glass-card p-5 rounded-2xl border border-slate-700/60 hover:border-violet-500/40 transition-all duration-300 flex flex-col justify-between space-y-4">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-500 to-pink-500 flex items-center justify-center font-bold text-xs text-white">
+                  ${escapeHtml(item.username).charAt(0).toUpperCase()}
+                </div>
+                <span class="font-bold text-slate-200 text-sm">@${escapeHtml(item.username)}</span>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">Verified</span>
+            </div>
+            <p class="text-slate-300 text-sm leading-relaxed pt-1">
+              "${escapeHtml(item.talent)}"
+            </p>
+          </div>
+
+          <!-- God Mode Administrative Controls -->
+          <div class="god-controls hidden pt-3 border-t border-slate-700/60 flex justify-end gap-2">
+            <button onclick="editTalentCard(${item.id})" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1">
+              <i class="fa-solid fa-pen text-[10px]"></i> Edit
+            </button>
+            <button onclick="deleteTalentCard(${item.id})" class="px-3 py-1 bg-red-600/80 hover:bg-red-500 text-white rounded-lg text-xs font-semibold transition-colors flex items-center gap-1">
+              <i class="fa-solid fa-trash text-[10px]"></i> Delete
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      // Refresh God Mode visibility on dynamic cards
+      if (isGodModeActive) {
+        document.querySelectorAll('.god-controls').forEach(el => el.classList.remove('hidden'));
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+      });
+    }
+
+
+    /* ================= GOD MODE CONTROLS ================= */
+    let isGodModeActive = false;
+
+    function promptGodMode() {
+      playAudio('pop');
+      const pass = prompt("🔐 Enter God's Password:");
+      if (pass === "15042010") {
+        isGodModeActive = true;
+        document.getElementById('godBadge').classList.remove('hidden');
+        document.getElementById('godBadge').classList.add('flex');
+        alert("⚡ GOD MODE ACTIVATED!\nYou now have full authority to edit or delete any user's post.");
+        renderTalentsGrid();
+      } else if (pass !== null) {
+        alert("❌ Access Denied: Incorrect Password!");
+      }
+    }
+
+    function deleteTalentCard(id) {
+      let list = getStoredTalents();
+      list = list.filter(item => item.id !== id);
+      saveStoredTalents(list);
+      renderTalentsGrid();
+    }
+
+    function editTalentCard(id) {
+      let list = getStoredTalents();
+      const target = list.find(item => item.id === id);
+      if (target) {
+        const updatedText = prompt("Edit user talent description:", target.talent);
+        if (updatedText !== null && updatedText.trim() !== "") {
+          target.talent = updatedText.trim();
+          saveStoredTalents(list);
+          renderTalentsGrid();
+        }
+      }
+    }
+
+    // Initialize application state
+    window.addEventListener('DOMContentLoaded', () => {
+      getStoredTalents();
+    });
+  </script>
+</body>
+</html>
