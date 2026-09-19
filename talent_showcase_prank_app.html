@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talent Hub & Prank Playground</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .font-heading {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Custom Animated Mesh Gradient Background */
+        .bg-mesh {
+            background: radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.25) 0px, transparent 50%),
+                        radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.2) 0px, transparent 50%),
+                        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.2) 0px, transparent 50%),
+                        radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.2) 0px, transparent 50%);
+            background-color: #0b0f19;
+        }
+
+        /* Subtle Pattern Overlay Texture */
+        .bg-texture {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-modal {
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Shake animation for alarm trigger */
+        @keyframes alarm-shake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            10%, 30%, 50%, 70%, 90% { transform: translate(-8px, 4px) rotate(-1deg); }
+            20%, 40%, 60%, 80% { transform: translate(8px, -4px) rotate(1deg); }
+        }
+
+        .animate-shake {
+            animation: alarm-shake 0.4s ease-in-out infinite;
+        }
+
+        /* Pulse glow for warning modal */
+        @keyframes red-glow {
+            0%, 100% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.2), inset 0 0 15px rgba(239, 68, 68, 0.1); }
+            50% { box-shadow: 0 0 50px rgba(239, 68, 68, 0.6), inset 0 0 30px rgba(239, 68, 68, 0.3); }
+        }
+
+        .glow-red {
+            animation: red-glow 1.5s infinite;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-mesh bg-texture min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white">
+
+    <header class="w-full max-w-6xl mx-auto p-6 flex justify-between items-center z-10">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="showScreen('landing')">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-600 to-pink-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
+                <i class="fa-solid font-bold text-white text-xl fa-bolt"></i>
+            </div>
+            <span class="font-heading text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
+                TalentSpot
+            </span>
+        </div>
+        <div id="header-badge" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full glass-card text-xs text-slate-300">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Prank Zone Active</span>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl mx-auto px-4 py-8 flex-1 flex flex-col justify-center items-center z-10">
+
+        <!-- ================= LANDING SCREEN ================= -->
+        <section id="screen-landing" class="w-full text-center space-y-8 animate-fade-in">
+            <div class="space-y-4 max-w-2xl mx-auto">
+                <span class="inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-violet-500/10 text-violet-400 border border-violet-500/20">
+                    Showcase & Discover
+                </span>
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight text-white">
+                    What is your <span class="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-pink-400 to-amber-300">Superpower?</span>
+                </h1>
+                <p class="text-slate-400 text-lg">
+                    Share your unique talent with the world or explore the incredible skills of others in our community.
+                </p>
+            </div>
+
+            <!-- Main Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-5 justify-center items-center pt-4 max-w-md mx-auto">
+                <button onclick="playAudio('pop'); showScreen('your-talent')" class="w-full sm:w-1/2 group relative inline-flex items-center justify-center p-0.5 overflow-hidden font-bold rounded-2xl group bg-gradient-to-br from-violet-600 via-pink-500 to-amber-400 group-hover:from-violet-600 group-hover:to-pink-500 hover:text-white text-white shadow-xl shadow-violet-500/20 transition-all duration-300 hover:scale-105 active:scale-95">
+                    <span class="w-full relative px-6 py-4 transition-all ease-in duration-75 bg-slate-900/80 rounded-[14px] group-hover:bg-opacity-0 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-pink-400 group-hover:text-white transition-colors"></i>
+                        <span>YOUR TALENT</span>
+                    </span>
+                </button>
+
+                <button onclick="playAudio('pop'); showScreen('others-talent')" class="w-full sm:w-1/2 group relative inline-flex items-center justify-center p-0.5 overflow-hidden font-bold rounded-2xl bg-gradient-to-br from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 border border-slate-700">
+                    <span class="w-full relative px-6 py-4 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-users text-violet-400"></i>
+                        <span>SEE OTHERS</span>
+                    </span>
+                </button>
+            </div>
+
+            <!-- Footer Notice Text -->
+            <div class="pt-12">
+                <p class="text-xs md:text-sm text-slate-400/80 max-w-lg mx-auto bg-slate-800/40 py-2.5 px-4 rounded-full border border-slate-700/50 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                    <span>You aren't sharing any personal info so just be relaxed</span>
+                </p>
+            </div>
+        </section>
+
+
+        <!-- ================= YOUR TALENT SCREEN ================= -->
+        <section id="screen-your-talent" class="w-full max-w-md hidden animate-fade-in">
+            <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl relative">
+                <!-- Top Icon -->
+                <div class="w-12 h-12 rounded-2xl bg-violet-500/20 border border-violet-500/30 flex items-center justify-center text-violet-400 mb-6 mx-auto">
+                    <i class="fa-solid fa-pen-nib text-xl"></i>
+                </div>
+
+                <h2 class="text-2xl font-bold text-center text-white mb-2">Share Your Skill</h2>
+                <p class="text-sm text-slate-400 text-center mb-6">Let everyone know what makes you special!</p>
+
+                <!-- Input Form -->
+                <form id="talent-form" onsubmit="handleShare(event)" class="space-y-5">
+                    <div>
+                        <label for="username" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                            Username / Nickname
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                <i class="fa-solid fa-user"></i>
+                            </span>
+                            <input type="text" id="username" required placeholder="e.g. MasterJuggler99" 
+                                class="w-full pl-10 pr-4 py-3 bg-slate-900/60 border border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent text-white placeholder-slate-500 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="talent" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                            Your Unique Talent
+                        </label>
+                        <div class="relative">
+                            <span class="absolute top-3.5 left-0 pl-3.5 flex items-start pointer-events-none text-slate-500">
+                                <i class="fa-solid fa-star"></i>
+                            </span>
+                            <textarea id="talent" required rows="3" placeholder="e.g. I can memorize 50 digits of Pi in 10 seconds!" 
+                                class="w-full pl-10 pr-4 py-3 bg-slate-900/60 border border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent text-white placeholder-slate-500 outline-none transition-all resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4 pt-3">
+                        <!-- BACK BUTTON TRIGGERS THE PRANK -->
+                        <button type="button" onclick="triggerPrankModal()" 
+                            class="w-1/2 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-semibold text-slate-300 transition-all flex items-center justify-center gap-2 hover:text-white active:scale-95">
+                            <i class="fa-solid fa-arrow-left text-xs"></i> Back
+                        </button>
+
+                        <button type="submit" 
+                            class="w-1/2 py-3 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 font-semibold text-white shadow-lg shadow-violet-600/30 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95">
+                            <i class="fa-solid fa-paper-plane text-xs"></i> Share
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+
+        <!-- ================= SEE OTHERS TALENT SCREEN ================= -->
+        <section id="screen-others-talent" class="w-full hidden space-y-6 animate-fade-in">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-800/40 p-4 rounded-2xl border border-slate-700/50">
+                <div>
+                    <h2 class="text-xl font-bold text-white">Community Showcase</h2>
+                    <p class="text-xs text-slate-400">Discover incredible hidden talents from around the globe</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="playAudio('pop'); showScreen('your-talent')" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm font-semibold transition-all shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-plus text-xs"></i> Submit Yours
+                    </button>
+                    <button onclick="playAudio('pop'); showScreen('landing')" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-xl text-sm font-semibold transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-house text-xs"></i> Home
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid Feed of Talents -->
+            <div id="talents-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Dynamically Populated via JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= PRANK WARNING MODAL ($100 REQUEST) ================= -->
+    <div id="prank-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div id="prank-card" class="glass-modal glow-red max-w-md w-full rounded-3xl p-6 md:p-8 text-center space-y-6 relative overflow-hidden transform scale-95 transition-all">
+            
+            <!-- Warning Header Icon -->
+            <div class="w-16 h-16 rounded-full bg-red-500/20 border-2 border-red-500/50 text-red-500 flex items-center justify-center mx-auto text-3xl animate-bounce">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <div class="space-y-2">
+                <span class="px-3 py-1 bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold uppercase rounded-full tracking-wider">
+                    SYSTEM LOCKOUT
+                </span>
+                <h3 class="text-2xl font-extrabold text-white">Cancellation Fee Required!</h3>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    Attempting to leave without submitting your talent incurs an immediate processing penalty. 
+                </p>
+            </div>
+
+            <!-- Fine Box -->
+            <div class="bg-red-950/40 border border-red-500/30 rounded-2xl p-4 text-center">
+                <span class="text-xs text-red-300 uppercase tracking-widest font-semibold block mb-1">Cancellation Penalty</span>
+                <span class="text-4xl font-extrabold text-red-400 font-heading">$100.00 USD</span>
+                <p class="text-[10px] text-red-300/70 mt-1">Request cannot be cancelled or closed until fee is settled.</p>
+            </div>
+
+            <!-- Cannot exit message prank note -->
+            <p class="text-xs text-amber-400/90 italic flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-lock text-xs"></i>
+                <span>Navigation locked. Dismiss button disabled.</span>
+            </p>
+
+            <!-- Action Button -->
+            <div class="pt-2">
+                <button onclick="openPaymentScreen()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold text-lg shadow-lg shadow-red-600/40 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>PAY $100 TO EXIT</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= MOCK PAYMENT / REVEAL MODAL ================= -->
+    <div id="payment-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
+        <div class="glass-card max-w-md w-full rounded-3xl p-6 md:p-8 space-y-6 relative border-2 border-emerald-500/40 shadow-2xl">
+            
+            <div class="flex justify-between items-center border-b border-slate-700/60 pb-4">
+                <div class="flex items-center gap-2 text-emerald-400 font-heading font-bold text-lg">
+                    <i class="fa-solid fa-shield-cat"></i>
+                    <span>Secure Prank Gateway</span>
+                </div>
+                <span class="text-xs px-2.5 py-1 rounded bg-slate-800 text-slate-400 font-mono">TEST-MODE</span>
+            </div>
+
+            <div id="pay-step-1" class="space-y-4">
+                <p class="text-sm text-slate-300">Enter payment amount ($100 minimum to unlock exit):</p>
+                
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-xl font-bold text-slate-400">$</span>
+                    <input type="number" id="pay-amount" value="100" min="100" 
+                        class="w-full pl-8 pr-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-xl font-bold text-emerald-400 outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase">Mock Card Number</label>
+                    <input type="text" placeholder="4000 0000 0000 0000" maxlength="19" value="4242 •••• •••• 4242" readonly
+                        class="w-full px-4 py-3 bg-slate-900/50 border border-slate-800 rounded-xl text-slate-400 font-mono text-sm outline-none cursor-not-allowed">
+                </div>
+
+                <button onclick="processPrankPayment()" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-bold text-white transition-all shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>Confirm & Pay $100</span>
+                </button>
+            </div>
+
+            <!-- PRANK REVEAL SUCCESS STEP -->
+            <div id="pay-step-2" class="hidden text-center space-y-5 py-4">
+                <div class="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-500 text-amber-400 flex items-center justify-center mx-auto text-4xl animate-bounce">
+                    <i class="fa-solid fa-face-laugh-squint"></i>
+                </div>
+                
+                <h3 class="text-3xl font-extrabold text-amber-300 font-heading">GOTCHA! 😂</h3>
+                
+                <p class="text-slate-200 text-sm leading-relaxed">
+                    Relax! This was just a <strong>harmless prank</strong>! No money was charged, and no personal info was stored anywhere illegal.
+                </p>
+
+                <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-xs text-slate-400 text-left space-y-1">
+                    <p class="text-emerald-400 font-semibold mb-1">✔ Safe & Secure Notice:</p>
+                    <p>• Zero real transactions took place.</p>
+                    <p>• Built purely for laughs and entertainment.</p>
+                </div>
+
+                <button onclick="closePrankAndReturn()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 text-white font-bold hover:opacity-90 transition-all shadow-lg">
+                    Return to Homepage 🎉
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <footer class="w-full max-w-6xl mx-auto p-6 text-center text-xs text-slate-400 z-10">
+        <p>© 2026 TalentSpot. Created for fun and entertainment.</p>
+    </footer>
+
+
+    <script>
+        /* ================= AUDIO SYNTHESIZER (WEB AUDIO API) ================= */
+        // Uses Web Audio API so no external sound files are needed!
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioCtx();
+            }
+        }
+
+        function playAudio(type) {
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'pop') {
+                // UI Click Sound
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } 
+            else if (type === 'alarm') {
+                // Prank Warning Alarm Sound
+                for (let i = 0; i < 3; i++) {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    const startTime = now + (i * 0.15);
+                    osc.frequency.setValueAtTime(800, startTime);
+                    osc.frequency.linearRampToValueAtTime(400, startTime + 0.12);
+                    gain.gain.setValueAtTime(0.3, startTime);
+                    gain.gain.linearRampToValueAtTime(0.01, startTime + 0.12);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(startTime);
+                    osc.stop(startTime + 0.12);
+                }
+            } 
+            else if (type === 'fanfare') {
+                // Success Chime Sound
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, index) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    const startTime = now + (index * 0.1);
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, startTime);
+                    gain.gain.setValueAtTime(0.25, startTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.4);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(startTime);
+                    osc.stop(startTime + 0.4);
+                });
+            }
+        }
+
+
+        /* ================= INITIAL PRE-POPULATED DATA ================= */
+        const defaultTalents = [
+            { username: "EchoMaster", talent: "Beatboxing while juggling 3 glowing LED balls simultaneously." },
+            { username: "WizardWhistler", talent: "Can whistle the entire Harry Potter theme song perfectly backward." },
+            { username: "CubeNinja", talent: "Speed-solving a 3x3 Rubik's cube under 15 seconds while blindfolded." },
+            { username: "PolyglotPro", talent: "Can say 'Hello, how are you?' in 32 different world languages!" }
+        ];
+
+        // Retrieve stored talents or initialize with defaults
+        function getStoredTalents() {
+            const data = localStorage.getItem('user_talents_list');
+            if (data) {
+                try { return JSON.parse(data); } catch (e) { return defaultTalents; }
+            }
+            localStorage.setItem('user_talents_list', JSON.stringify(defaultTalents));
+            return defaultTalents;
+        }
+
+
+        /* ================= SCREEN NAVIGATION ================= */
+        function showScreen(screenName) {
+            document.getElementById('screen-landing').classList.add('hidden');
+            document.getElementById('screen-your-talent').classList.add('hidden');
+            document.getElementById('screen-others-talent').classList.add('hidden');
+
+            if (screenName === 'landing') {
+                document.getElementById('screen-landing').classList.remove('hidden');
+            } else if (screenName === 'your-talent') {
+                document.getElementById('screen-your-talent').classList.remove('hidden');
+            } else if (screenName === 'others-talent') {
+                renderTalentsGrid();
+                document.getElementById('screen-others-talent').classList.remove('hidden');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        /* ================= SUBMIT / SHARE TALENT LOGIC ================= */
+        function handleShare(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('username');
+            const talentInput = document.getElementById('talent');
+
+            const newTalent = {
+                username: usernameInput.value.trim(),
+                talent: talentInput.value.trim()
+            };
+
+            if (!newTalent.username || !newTalent.talent) return;
+
+            // Save to local storage
+            const currentList = getStoredTalents();
+            currentList.unshift(newTalent);
+            localStorage.setItem('user_talents_list', JSON.stringify(currentList));
+
+            // Reset form
+            usernameInput.value = '';
+            talentInput.value = '';
+
+            // Play celebratory audio and confetti
+            playAudio('fanfare');
+            if (window.confetti) {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+
+            // Switch to SEE OTHERS TALENT screen
+            showScreen('others-talent');
+        }
+
+
+        /* ================= RENDER TALENT CARDS ================= */
+        function renderTalentsGrid() {
+            const container = document.getElementById('talents-grid');
+            const talents = getStoredTalents();
+
+            container.innerHTML = talents.map((item, index) => `
+                <div class="glass-card p-5 rounded-2xl hover:border-violet-500/40 transition-all duration-300 hover:scale-[1.01] flex flex-col justify-between space-y-4">
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-500 to-pink-500 flex items-center justify-center font-bold text-xs text-white">
+                                ${item.username.charAt(0).toUpperCase()}
+                            </div>
+                            <span class="font-bold text-slate-200 text-sm">@${escapeHtml(item.username)}</span>
+                        </div>
+                        <p class="text-slate-300 text-sm leading-relaxed pt-1">
+                            "${escapeHtml(item.talent)}"
+                        </p>
+                    </div>
+                    <div class="flex justify-between items-center text-xs text-slate-400 border-t border-slate-700/40 pt-3">
+                        <span class="text-pink-400/80 font-medium">Verified Talent</span>
+                        <button onclick="playAudio('pop')" class="text-slate-400 hover:text-pink-400 transition-colors flex items-center gap-1">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+            });
+        }
+
+
+        /* ================= PRANK MODAL CONTROL ================= */
+        function triggerPrankModal() {
+            playAudio('alarm');
+            const modal = document.getElementById('prank-modal');
+            const card = document.getElementById('prank-card');
+
+            modal.classList.remove('hidden');
+            card.classList.add('animate-shake');
+
+            // Remove shake after brief animation
+            setTimeout(() => {
+                card.classList.remove('animate-shake');
+            }, 800);
+        }
+
+        function openPaymentScreen() {
+            playAudio('pop');
+            document.getElementById('prank-modal').classList.add('hidden');
+            document.getElementById('payment-modal').classList.remove('hidden');
+            document.getElementById('pay-step-1').classList.remove('hidden');
+            document.getElementById('pay-step-2').classList.add('hidden');
+        }
+
+        function processPrankPayment() {
+            playAudio('fanfare');
+            document.getElementById('pay-step-1').classList.add('hidden');
+            document.getElementById('pay-step-2').classList.remove('hidden');
+
+            // Burst celebratory prank confetti
+            if (window.confetti) {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.5 }
+                });
+            }
+        }
+
+        function closePrankAndReturn() {
+            playAudio('pop');
+            document.getElementById('payment-modal').classList.add('hidden');
+            showScreen('landing');
+        }
+
+        // Initialize page setup
+        window.addEventListener('DOMContentLoaded', () => {
+            getStoredTalents();
+        });
+    </script>
+</body>
+</html>
